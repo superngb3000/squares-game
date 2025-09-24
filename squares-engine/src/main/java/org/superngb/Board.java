@@ -11,6 +11,24 @@ public class Board {
         this.grid = new PieceColor[size][size];
     }
 
+    public Board(int size, String stringGrid) {
+        this.size = size;
+        this.grid = new PieceColor[size][size];
+
+        int x, y;
+        stringGrid = stringGrid.replace("\n", "").toUpperCase();
+        char[] tokens = stringGrid.toCharArray();
+        for (int i = 0; i < size * size; i++) {
+            for (PieceColor pieceColor : PieceColor.values()) {
+                if (tokens[i] == pieceColor.name().charAt(0)) {
+                    x = i / size;
+                    y = i % size;
+                    this.place(x, y, pieceColor);
+                }
+            }
+        }
+    }
+
     public boolean isFree(int x, int y) {
         return grid[x][y] == null;
     }
