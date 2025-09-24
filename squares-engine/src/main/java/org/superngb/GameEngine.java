@@ -8,7 +8,6 @@ public class GameEngine {
     private Player player2;
     private Player currentPlayer;
     private boolean gameStarted = false;
-    private int[] lastMove = new int[2];
 
     public void startGame(int size, Player player1, Player player2) {
         this.board = new Board(size);
@@ -17,7 +16,7 @@ public class GameEngine {
         this.currentPlayer = player1;
         this.gameStarted = true;
         System.out.println("New game started");
-
+        
         if (currentPlayer.getPlayerType() == PlayerType.COMP) {
             int[] move = getMove();
             move(move[0], move[1]);
@@ -28,12 +27,10 @@ public class GameEngine {
         if (!gameStarted || !board.isFree(x, y)) {
             return;
         }
-        lastMove[0] = x;
-        lastMove[1] = y;
 
         board.place(x, y, currentPlayer.getColor());
 
-        if (checkWin(currentPlayer.getColor())) {
+        if (checkWin(currentPlayer.getColor(), x, y)) {
             System.out.printf("Game finished. %s wins!%n", currentPlayer.getColor());
             gameStarted = false;
             return;
@@ -53,10 +50,9 @@ public class GameEngine {
         }
     }
 
-    private boolean checkWin(PieceColor color) {
+    private boolean checkWin(PieceColor color, int x, int y) {
         int n = board.getSize();
         PieceColor[][] grid = board.getGrid();
-        int x = lastMove[0], y = lastMove[1];
         int dx, dy, cx1, cx2, cy1, cy2;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -90,6 +86,35 @@ public class GameEngine {
     }
 
     private int[] getMove() { // TODO алгоритм бота
+        int[] move;
+
+        move = findWinningMove(currentPlayer.getColor());
+        if (move != null) return move;
+
+        PieceColor opponentColor = (currentPlayer.getColor() == PieceColor.B) ? PieceColor.W : PieceColor.B;
+        move = findWinningMove(opponentColor);
+        if (move != null) return move;
+
+        move = findBestMove(currentPlayer.getColor());
+        if (move != null) return move;
+
+        move = getRandomMove();
+        return move;
+    }
+
+    private int[] findWinningMove(PieceColor color) {
+        int n = board.getSize();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board.isFree(i, j)) {
+                    if (checkWin(color, i, j)) return new int[]{i, j};
+                }
+            }
+        }
+        return null;
+    }
+
+    private int[] getRandomMove() {
         Random rnd = new Random();
         int x, y;
         do {
@@ -98,4 +123,59 @@ public class GameEngine {
         } while (!board.isFree(x, y));
         return new int[]{x, y};
     }
+
+    private int[] findBestMove(PieceColor color) {
+        int n = board.getSize();
+        PieceColor[][] grid = board.getGrid().clone();
+        int bestScore = -1;
+        int[] bestMove = null;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (board.isFree(i, j)) {
+                    // Считаем очки за ход
+                    grid[i][j] = color;
+                    int score = countPotentialSquares(grid, color);
+                    grid[i][j] = null;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMove = new int[]{i, j};
+                    }
+                }
+            }
+        }
+        return bestMove;
+    }
+
+    private int countPotentialSquares(PieceColor[][] grid, PieceColor color) {
+        int count = 0;
+        int n = board.getSize();
+
+        for (int x1 = 0; x1 < n; x1++) {
+            for (int y1 = 0; y1 < n; y1++) {
+                if (grid[x1][y1] != color) continue;
+                for (int x2 = 0; x2 < n; x2++) {
+                    for (int y2 = 0; y2 < n; y2++) {
+                        if ((x1 == x2 && y1 == y2) || grid[x2][y2] != color) continue;
+
+                        int dx = x2 - x1;
+                        int dy = y2 - y1;
+
+                        int x3 = x1 - dy, y3 = y1 + dx;
+                        int x4 = x2 - dy, y4 = y2 + dx;
+
+                        if (inBounds(x3, y3, n) && inBounds(x4, y4, n)) {
+                            if ((grid[x3][y3] == color || grid[x3][y3] == null) &&
+                                    (grid[x4][y4] == color || grid[x4][y4] == null)) {
+                                count++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
 }
