@@ -16,9 +16,9 @@ public class GameEngine {
         this.currentPlayer = player1;
         this.gameStarted = true;
         System.out.println("New game started");
-        
+
         if (currentPlayer.getPlayerType() == PlayerType.COMP) {
-            int[] move = getMove();
+            int[] move = getMove(board, currentPlayer.getColor());
             move(move[0], move[1]);
         }
     }
@@ -30,7 +30,7 @@ public class GameEngine {
 
         board.place(x, y, currentPlayer.getColor());
 
-        if (checkWin(currentPlayer.getColor(), x, y)) {
+        if (checkWin(board, currentPlayer.getColor(), x, y)) {
             System.out.printf("Game finished. %s wins!%n", currentPlayer.getColor());
             gameStarted = false;
             return;
@@ -45,14 +45,14 @@ public class GameEngine {
         currentPlayer = (currentPlayer == player1) ? player2 : player1;
 
         if (currentPlayer.getPlayerType() == PlayerType.COMP) {
-            int[] move = getMove();
+            int[] move = getMove(board, currentPlayer.getColor());
             move(move[0], move[1]);
         }
     }
 
-    private boolean checkWin(PieceColor color, int x, int y) {
-        int n = board.getSize();
-        PieceColor[][] grid = board.getGrid();
+    private boolean checkWin(Board currentBoard, PieceColor color, int x, int y) {
+        int n = currentBoard.getSize();
+        PieceColor[][] grid = currentBoard.getGrid();
         int dx, dy, cx1, cx2, cy1, cy2;
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -85,57 +85,60 @@ public class GameEngine {
         return x >= 0 && y >= 0 && x < n && y < n;
     }
 
-    private int[] getMove() { // TODO алгоритм бота
+    public int[] getMove(Board currentBoard, PieceColor color) {
         int[] move;
 
-        move = findWinningMove(currentPlayer.getColor());
+        // Можно ли победить за ход
+        move = findWinningMove(currentBoard, color);
         if (move != null) return move;
 
-        PieceColor opponentColor = (currentPlayer.getColor() == PieceColor.B) ? PieceColor.W : PieceColor.B;
-        move = findWinningMove(opponentColor);
+        // Можно ли заблокировать победу противника
+        PieceColor opponentColor = (color == PieceColor.B) ? PieceColor.W : PieceColor.B;
+        move = findWinningMove(currentBoard, opponentColor);
         if (move != null) return move;
 
-        move = findBestMove(currentPlayer.getColor());
+        // Поиск наиболее перспективного хода
+        move = findBestMove(currentBoard, color);
         if (move != null) return move;
 
-        move = getRandomMove();
+        // Если ничего не получилось рандомим ход
+        move = getRandomMove(currentBoard);
         return move;
     }
 
-    private int[] findWinningMove(PieceColor color) {
-        int n = board.getSize();
+    private int[] findWinningMove(Board currentBoard, PieceColor color) {
+        int n = currentBoard.getSize();
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (board.isFree(i, j)) {
-                    if (checkWin(color, i, j)) return new int[]{i, j};
+                if (currentBoard.isFree(i, j)) {
+                    if (checkWin(currentBoard, color, i, j)) return new int[]{i, j};
                 }
             }
         }
         return null;
     }
 
-    private int[] getRandomMove() {
+    private int[] getRandomMove(Board currentBoard) {
         Random rnd = new Random();
         int x, y;
         do {
-            x = rnd.nextInt(board.getSize());
-            y = rnd.nextInt(board.getSize());
-        } while (!board.isFree(x, y));
+            x = rnd.nextInt(currentBoard.getSize());
+            y = rnd.nextInt(currentBoard.getSize());
+        } while (!currentBoard.isFree(x, y));
         return new int[]{x, y};
     }
 
-    private int[] findBestMove(PieceColor color) {
-        int n = board.getSize();
-        PieceColor[][] grid = board.getGrid().clone();
+    private int[] findBestMove(Board currentBoard, PieceColor color) {
+        int n = currentBoard.getSize();
+        PieceColor[][] grid = currentBoard.getGrid().clone();
         int bestScore = -1;
         int[] bestMove = null;
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (board.isFree(i, j)) {
-                    // Считаем очки за ход
+                if (currentBoard.isFree(i, j)) {
                     grid[i][j] = color;
-                    int score = countPotentialSquares(grid, color);
+                    int score = countPotentialSquares(n, grid, color);
                     grid[i][j] = null;
 
                     if (score > bestScore) {
@@ -148,10 +151,8 @@ public class GameEngine {
         return bestMove;
     }
 
-    private int countPotentialSquares(PieceColor[][] grid, PieceColor color) {
+    private int countPotentialSquares(int n, PieceColor[][] grid, PieceColor color) {
         int count = 0;
-        int n = board.getSize();
-
         for (int x1 = 0; x1 < n; x1++) {
             for (int y1 = 0; y1 < n; y1++) {
                 if (grid[x1][y1] != color) continue;
