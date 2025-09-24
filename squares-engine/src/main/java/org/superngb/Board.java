@@ -29,12 +29,21 @@ public class Board {
     }
 
     public void print() {
+        for (int i = 0; i <= size + 1; i++) {
+            System.out.print("= ");
+        }
+        System.out.println();
         for (PieceColor[] row : grid) {
+            System.out.print("| ");
             for (PieceColor c : row) {
                 System.out.print((c == null ? EMPTY_FIELD_SIGN : c) + " ");
             }
-            System.out.println();
+            System.out.println("|");
         }
+        for (int i = 0; i <= size + 1; i++) {
+            System.out.print("= ");
+        }
+        System.out.println();
     }
 
     public PieceColor get(int x, int y) {

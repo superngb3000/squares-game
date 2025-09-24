@@ -2,9 +2,9 @@ package org.superngb;
 
 public class Player {
     private final PlayerType playerType;
-    private final char color;
+    private final PieceColor color;
 
-    public Player(PlayerType playerType, char color) {
+    public Player(PlayerType playerType, PieceColor color) {
         this.playerType = playerType;
         this.color = color;
     }
@@ -13,7 +13,7 @@ public class Player {
         return playerType;
     }
 
-    public char getColor() {
+    public PieceColor getColor() {
         return color;
     }
 }
