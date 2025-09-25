@@ -37,13 +37,13 @@ public class CommandLoop {
                 try {
                     int n = Integer.parseInt(parts[1].replace(",", "").trim());
 
-                    PlayerType playerType1 = PlayerType.valueOf(parts[2].trim().toUpperCase());
-                    PieceColor playerColor1 = PieceColor.valueOf(parts[3].replace(",", "").trim().toUpperCase());
-                    Player player1 = new Player(playerType1, playerColor1);
+                    PlayerTypeEnum playerTypeEnum1 = PlayerTypeEnum.valueOf(parts[2].trim().toUpperCase());
+                    PieceColorEnum playerColor1 = PieceColorEnum.valueOf(parts[3].replace(",", "").trim().toUpperCase());
+                    Player player1 = new Player(playerTypeEnum1, playerColor1);
 
-                    PlayerType playerType2 = PlayerType.valueOf(parts[4].trim().toUpperCase());
-                    PieceColor playerColor2 = PieceColor.valueOf(parts[5].replace(",", "").trim().toUpperCase());
-                    Player player2 = new Player(playerType2, playerColor2);
+                    PlayerTypeEnum playerTypeEnum2 = PlayerTypeEnum.valueOf(parts[4].trim().toUpperCase());
+                    PieceColorEnum playerColor2 = PieceColorEnum.valueOf(parts[5].replace(",", "").trim().toUpperCase());
+                    Player player2 = new Player(playerTypeEnum2, playerColor2);
 
                     gameEngine.startGame(n, player1, player2);
                 } catch (Exception e) {

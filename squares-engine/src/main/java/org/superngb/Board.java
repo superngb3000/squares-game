@@ -3,27 +3,27 @@ package org.superngb;
 import static org.superngb.Main.EMPTY_FIELD_SIGN;
 
 public class Board {
-    private final PieceColor[][] grid;
+    private final PieceColorEnum[][] grid;
     private final int size;
 
     public Board(int size) {
         this.size = size;
-        this.grid = new PieceColor[size][size];
+        this.grid = new PieceColorEnum[size][size];
     }
 
     public Board(int size, String stringGrid) {
         this.size = size;
-        this.grid = new PieceColor[size][size];
+        this.grid = new PieceColorEnum[size][size];
 
         int x, y;
         stringGrid = stringGrid.replace("\n", "").toUpperCase();
         char[] tokens = stringGrid.toCharArray();
         for (int i = 0; i < size * size; i++) {
-            for (PieceColor pieceColor : PieceColor.values()) {
-                if (tokens[i] == pieceColor.name().charAt(0)) {
+            for (PieceColorEnum pieceColorEnum : PieceColorEnum.values()) {
+                if (tokens[i] == pieceColorEnum.name().charAt(0)) {
                     x = i / size;
                     y = i % size;
-                    this.place(x, y, pieceColor);
+                    this.place(x, y, pieceColorEnum);
                 }
             }
         }
@@ -33,7 +33,7 @@ public class Board {
         return grid[x][y] == null;
     }
 
-    public void place(int x, int y, PieceColor color) {
+    public void place(int x, int y, PieceColorEnum color) {
         grid[x][y] = color;
     }
 
@@ -51,9 +51,9 @@ public class Board {
             System.out.print("= ");
         }
         System.out.println();
-        for (PieceColor[] row : grid) {
+        for (PieceColorEnum[] row : grid) {
             System.out.print("| ");
-            for (PieceColor c : row) {
+            for (PieceColorEnum c : row) {
                 System.out.print((c == null ? EMPTY_FIELD_SIGN : c) + " ");
             }
             System.out.println("|");
@@ -64,11 +64,11 @@ public class Board {
         System.out.println();
     }
 
-    public PieceColor get(int x, int y) {
+    public PieceColorEnum get(int x, int y) {
         return grid[x][y];
     }
 
-    public PieceColor[][] getGrid() {
+    public PieceColorEnum[][] getGrid() {
         return grid;
     }
 

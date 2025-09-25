@@ -1,6 +1,6 @@
 package org.superngb;
 
-public enum PlayerType {
+public enum PlayerTypeEnum {
     USER,
     COMP
 }

@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.superngb.Board;
 import org.superngb.GameEngine;
-import org.superngb.PieceColor;
+import org.superngb.PieceColorEnum;
 import org.superngb.squaresservice.dto.BoardDto;
 import org.superngb.squaresservice.dto.SimpleMoveDto;
 
@@ -18,9 +18,12 @@ public class GameService implements IGameService {
         String gridData = boardDto.data();
         String playerColor = boardDto.nextPlayerColor().toUpperCase();
         Board board = new Board(size, gridData);
-        PieceColor pieceColor = PieceColor.valueOf(playerColor);
+        PieceColorEnum pieceColor = PieceColorEnum.valueOf(playerColor);
         GameEngine gameEngine = new GameEngine();
         int[] move = gameEngine.getMove(board, pieceColor);
+        if (move == null) {
+            return new ResponseEntity<>("No move available", HttpStatus.NO_CONTENT);
+        }
         SimpleMoveDto simpleMoveDto = new SimpleMoveDto(move[0], move[1], playerColor);
         return new ResponseEntity<>(simpleMoveDto, HttpStatus.OK);
     }
