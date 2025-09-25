@@ -8,5 +8,5 @@ import org.superngb.squaresservice.dto.BoardDto;
 public interface IGameService {
     ResponseEntity<?> getNextMove(BoardDto boardDto);
 
-    ResponseEntity<?> getStatus();
+    ResponseEntity<?> getStatus(BoardDto boardDto);
 }

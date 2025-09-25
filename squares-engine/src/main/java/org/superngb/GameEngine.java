@@ -7,18 +7,15 @@ public class GameEngine {
     private Player player1;
     private Player player2;
     private Player currentPlayer;
+    private boolean gameStarted = false;
     private GameStatus gameStatus;
-
-    public GameEngine() {
-        this.gameStatus = new GameStatus();
-    }
 
     public void startGame(int size, Player player1, Player player2) {
         this.board = new Board(size);
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
-        this.gameStatus.start();
+        this.gameStarted = false;
         System.out.println("New game started");
 
         if (currentPlayer.getPlayerType() == PlayerTypeEnum.COMP) {
@@ -28,7 +25,7 @@ public class GameEngine {
     }
 
     public void move(int x, int y) {
-        if (gameStatus.getGameStatusEnum() != GameStatusEnum.ONGOING || !board.isFree(x, y)) {
+        if (!gameStarted || !board.isFree(x, y)) {
             return;
         }
 
@@ -36,13 +33,13 @@ public class GameEngine {
 
         if (checkWin(board, currentPlayer.getColor(), x, y)) {
             System.out.printf("Game finished. %s wins!%n", currentPlayer.getColor());
-            gameStatus.setWin(currentPlayer);
+            gameStarted = false;
             return;
         }
 
         if (board.isFull()) {
             System.out.println("Game finished. Draw");
-            gameStatus.setDraw();
+            gameStarted = false;
             return;
         }
 
@@ -75,7 +72,23 @@ public class GameEngine {
         return move;
     }
 
-    public GameStatus getGameStatus() {
+    public GameStatus getGameStatus(Board currentBoard) {
+        GameStatus gameStatus = new GameStatus();
+        int n = currentBoard.getSize();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (!currentBoard.isFree(i, j)) {
+                    PieceColorEnum pieceColorEnum = currentBoard.get(i, j);
+                    if (checkWin(currentBoard, pieceColorEnum, i, j)) {
+                        gameStatus.setWin(pieceColorEnum);
+                        return gameStatus;
+                    }
+                }
+            }
+        }
+        if (currentBoard.isFull()) gameStatus.setDraw();
+        else gameStatus.setOngoing();
+
         return gameStatus;
     }
 

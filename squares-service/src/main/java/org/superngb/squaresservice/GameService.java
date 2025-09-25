@@ -4,9 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.superngb.*;
-import org.superngb.squaresservice.dto.BoardDto;
-import org.superngb.squaresservice.dto.GameStatusDto;
-import org.superngb.squaresservice.dto.SimpleMoveDto;
+import org.superngb.squaresservice.dto.*;
 
 @Service
 public class GameService implements IGameService {
@@ -33,12 +31,15 @@ public class GameService implements IGameService {
     }
 
     @Override
-    public ResponseEntity<?> getStatus() {
-        GameStatus gameStatus = gameEngine.getGameStatus();
+    public ResponseEntity<?> getStatus(BoardDto boardDto) {
+        int size = boardDto.size();
+        String gridData = boardDto.data();
+        Board board = new Board(size, gridData);
+        GameStatus gameStatus = gameEngine.getGameStatus(board);
         GameStatusEnum status = gameStatus.getGameStatusEnum();
         String winnerColor = null;
         if (status == GameStatusEnum.WIN) {
-            winnerColor = gameStatus.getWinner().getColor().name();
+            winnerColor = gameStatus.getWinnerColor().name();
         }
         GameStatusDto gameStatusDto = new GameStatusDto(status.name(), winnerColor);
         return new ResponseEntity<>(gameStatusDto, HttpStatus.OK);

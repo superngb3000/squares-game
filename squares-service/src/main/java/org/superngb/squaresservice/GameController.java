@@ -22,7 +22,7 @@ public class GameController {
     }
 
     @GetMapping("/api/gameStatus")
-    public ResponseEntity<?> getGameStatus() {
-        return gameService.getStatus();
+    public ResponseEntity<?> getGameStatus(@RequestBody BoardDto boardDto) {
+        return gameService.getStatus(boardDto);
     }
 }

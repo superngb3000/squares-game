@@ -2,13 +2,13 @@ package org.superngb;
 
 public class GameStatus {
     private GameStatusEnum gameStatusEnum;
-    private Player winner;
+    private PieceColorEnum winnerColor;
 
     public GameStatus() {
         this.gameStatusEnum = GameStatusEnum.NONE;
     }
 
-    public void start() {
+    public void setOngoing() {
         this.gameStatusEnum = GameStatusEnum.ONGOING;
     }
 
@@ -16,16 +16,16 @@ public class GameStatus {
         this.gameStatusEnum = GameStatusEnum.DRAW;
     }
     
-    public void setWin(Player winner) {
+    public void setWin(PieceColorEnum winner) {
         this.gameStatusEnum = GameStatusEnum.WIN;
-        this.winner = winner;
+        this.winnerColor = winner;
     }
 
     public GameStatusEnum getGameStatusEnum() {
         return gameStatusEnum;
     }
 
-    public Player getWinner() {
-        return winner;
+    public PieceColorEnum getWinnerColor() {
+        return winnerColor;
     }
 }
