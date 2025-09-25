@@ -1,6 +1,6 @@
 package org.superngb;
 
-public enum PieceColor {
+public enum PieceColorEnum {
     W,
     B
 }

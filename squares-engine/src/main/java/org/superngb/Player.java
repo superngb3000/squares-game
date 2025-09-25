@@ -1,19 +1,19 @@
 package org.superngb;
 
 public class Player {
-    private final PlayerType playerType;
-    private final PieceColor color;
+    private final PlayerTypeEnum playerTypeEnum;
+    private final PieceColorEnum color;
 
-    public Player(PlayerType playerType, PieceColor color) {
-        this.playerType = playerType;
+    public Player(PlayerTypeEnum playerTypeEnum, PieceColorEnum color) {
+        this.playerTypeEnum = playerTypeEnum;
         this.color = color;
     }
 
-    public PlayerType getPlayerType() {
-        return playerType;
+    public PlayerTypeEnum getPlayerType() {
+        return playerTypeEnum;
     }
 
-    public PieceColor getColor() {
+    public PieceColorEnum getColor() {
         return color;
     }
 }
