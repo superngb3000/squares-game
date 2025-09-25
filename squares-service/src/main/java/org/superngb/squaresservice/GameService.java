@@ -3,14 +3,19 @@ package org.superngb.squaresservice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.superngb.Board;
-import org.superngb.GameEngine;
-import org.superngb.PieceColorEnum;
+import org.superngb.*;
 import org.superngb.squaresservice.dto.BoardDto;
+import org.superngb.squaresservice.dto.GameStatusDto;
 import org.superngb.squaresservice.dto.SimpleMoveDto;
 
 @Service
 public class GameService implements IGameService {
+
+    private final GameEngine gameEngine;
+
+    public GameService() {
+        this.gameEngine = new GameEngine();
+    }
 
     @Override
     public ResponseEntity<?> getNextMove(BoardDto boardDto) {
@@ -19,7 +24,6 @@ public class GameService implements IGameService {
         String playerColor = boardDto.nextPlayerColor().toUpperCase();
         Board board = new Board(size, gridData);
         PieceColorEnum pieceColor = PieceColorEnum.valueOf(playerColor);
-        GameEngine gameEngine = new GameEngine();
         int[] move = gameEngine.getMove(board, pieceColor);
         if (move == null) {
             return new ResponseEntity<>("No move available", HttpStatus.NO_CONTENT);
@@ -30,6 +34,13 @@ public class GameService implements IGameService {
 
     @Override
     public ResponseEntity<?> getStatus() {
-        return null;
+        GameStatus gameStatus = gameEngine.getGameStatus();
+        GameStatusEnum status = gameStatus.getGameStatusEnum();
+        String winnerColor = null;
+        if (status == GameStatusEnum.WIN) {
+            winnerColor = gameStatus.getWinner().getColor().name();
+        }
+        GameStatusDto gameStatusDto = new GameStatusDto(status.name(), winnerColor);
+        return new ResponseEntity<>(gameStatusDto, HttpStatus.OK);
     }
 }

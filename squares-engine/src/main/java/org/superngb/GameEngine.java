@@ -9,12 +9,16 @@ public class GameEngine {
     private Player currentPlayer;
     private GameStatus gameStatus;
 
+    public GameEngine() {
+        this.gameStatus = new GameStatus();
+    }
+
     public void startGame(int size, Player player1, Player player2) {
         this.board = new Board(size);
         this.player1 = player1;
         this.player2 = player2;
         this.currentPlayer = player1;
-        this.gameStatus = new GameStatus();
+        this.gameStatus.start();
         System.out.println("New game started");
 
         if (currentPlayer.getPlayerType() == PlayerTypeEnum.COMP) {

@@ -5,6 +5,10 @@ public class GameStatus {
     private Player winner;
 
     public GameStatus() {
+        this.gameStatusEnum = GameStatusEnum.NONE;
+    }
+
+    public void start() {
         this.gameStatusEnum = GameStatusEnum.ONGOING;
     }
 
