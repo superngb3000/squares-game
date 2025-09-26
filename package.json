@@ -4,7 +4,8 @@
     "start:service": "cd squares-service && gradlew bootRun",
     "install:web": "cd squares-web && npm install",
     "start:web": "cd squares-web && npm start",
-    "start": "npm run install:web && npm run build:engine && concurrently \"npm run start:service\" \"npm run start:web\"",
+    "open:web": "start http://localhost:3000",
+    "start": "npm run install:web && npm run build:engine && concurrently \"npm run start:service\" \"npm run start:web\" \"npm run open:web\"",
     "full": "npm install && npm start"
   },
   "devDependencies": {
