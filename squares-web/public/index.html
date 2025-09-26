@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Squares Game</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <h1>Squares Game</h1>
+
+  <div id="controls">
+    <label>
+      Board size:
+      <input type="number" id="boardSize" value="5" min="3">
+    </label>
+
+    <div class="player-settings">
+      <h3>White (W)</h3>
+      <label>Type:
+        <select id="whitePlayerType">
+          <option value="user">User</option>
+          <option value="computer">Computer</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="player-settings">
+      <h3>Black (B)</h3>
+      <label>Type:
+        <select id="blackPlayerType">
+          <option value="user">User</option>
+          <option value="computer">Computer</option>
+        </select>
+      </label>
+    </div>
+
+    <button id="newGame">New Game</button>
+  </div>
+
+
+  <div id="status" class="hide"></div>
+  <div id="board"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

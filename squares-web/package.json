@@ -1,0 +1,11 @@
+{
+  "name": "squares-web",
+  "version": "1.0.0",
+  "description": "Web app for Squares game",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
