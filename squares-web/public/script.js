@@ -1,4 +1,5 @@
 const API_URL = "http://localhost:8080/api/"
+const BOARD_MIN_SIZE = 3
 
 var API = {
   getNextMove : async (requestBody) => {
@@ -125,9 +126,16 @@ var handlers = {
             render.renderStatus(message);
             let boardElem = document.getElementById("board");
             boardElem.classList.add("static");
+            return;
         }
 
         if (gameSettings[gameSettings.nextMove].playerType === playerTypes.computer) await handlers.autoMove();
+    },
+
+    checkInputSize : (e) => {
+        let minValue = parseInt(e.target.min);
+        let newValue = e.target.value;
+        if (newValue < minValue) e.target.value = minValue;
     },
 
     autoMove : async () => {
@@ -143,3 +151,4 @@ var handlers = {
 }
 
 document.getElementById("newGame").addEventListener("click", async () => { await handlers.newGame() })
+document.getElementById("boardSize").addEventListener("change", async (e) => { await handlers.checkInputSize(e) })

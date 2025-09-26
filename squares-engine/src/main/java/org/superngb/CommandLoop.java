@@ -76,10 +76,11 @@ public class CommandLoop {
                 System.out.println(
                         """
                                 Commands:
-                                GAME - начать новую игру.
-                                MOVE - сделать ход
-                                EXIT - выход (завершение работы программы)
-                                HELP - вывод описания команд""");
+                                GAME - start a new game
+                                MOVE - make a move
+                                EXIT - exit (program shutdown)
+                                HELP - output of the description of commands
+                                """);
                 break;
             }
         }
