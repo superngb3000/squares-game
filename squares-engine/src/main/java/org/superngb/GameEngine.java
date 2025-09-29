@@ -151,53 +151,72 @@ public class GameEngine {
 
     private int[] findBestMove(Board currentBoard, PieceColorEnum color) {
         int n = currentBoard.getSize();
-        PieceColorEnum[][] grid = currentBoard.getGrid().clone();
-        int bestScore = -1;
-        int[] bestMove = null;
+        int[][] score = new int[n][n];
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (currentBoard.isFree(i, j)) {
-                    grid[i][j] = color;
-                    int score = countPotentialSquares(n, grid, color);
-                    grid[i][j] = null;
+                if (!currentBoard.isFree(i, j)) continue;
+                evaluatePotentialSquares(currentBoard, color, i, j, score);
+            }
+        }
 
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = new int[]{i, j};
-                    }
+        int bestScore = -1;
+        int[] bestMove = null;
+        for (int x = 0; x < n; x++) {
+            for (int y = 0; y < n; y++) {
+                if (!currentBoard.isFree(x, y)) continue;
+                if (score[x][y] > bestScore) {
+                    bestScore = score[x][y];
+                    bestMove = new int[]{x, y};
                 }
             }
         }
         return bestMove;
     }
 
-    private int countPotentialSquares(int n, PieceColorEnum[][] grid, PieceColorEnum color) {
-        int count = 0;
-        for (int x1 = 0; x1 < n; x1++) {
-            for (int y1 = 0; y1 < n; y1++) {
-                if (grid[x1][y1] != color) continue;
-                for (int x2 = 0; x2 < n; x2++) {
-                    for (int y2 = 0; y2 < n; y2++) {
-                        if ((x1 == x2 && y1 == y2) || grid[x2][y2] != color) continue;
+    private void evaluatePotentialSquares(Board currentBoard, PieceColorEnum color, int x, int y, int[][] score) {
+        int n = currentBoard.getSize();
+        int[][] directions = {{1, 1}, {1, -1}, {-1, 1}, {-1, -1}};
 
-                        int dx = x2 - x1;
-                        int dy = y2 - y1;
+        for (int[] dir : directions) {
+            int dx = dir[0], dy = dir[1];
 
-                        int x3 = x1 - dy, y3 = y1 + dx;
-                        int x4 = x2 - dy, y4 = y2 + dx;
+            for (int size = 1; size < n; size++) {
+                int[][] corners = {
+                        {x, y},
+                        {x + dx * size, y},
+                        {x, y + dy * size},
+                        {x + dx * size, y + dy * size}
+                };
 
-                        if (inBounds(x3, y3, n) && inBounds(x4, y4, n)) {
-                            if ((grid[x3][y3] == color || grid[x3][y3] == null) &&
-                                    (grid[x4][y4] == color || grid[x4][y4] == null)) {
-                                count++;
-                            }
-                        }
+                boolean valid = true;
+                for (int[] c : corners) {
+                    if (!inBounds(c[0], c[1], n)) {
+                        valid = false;
+                        break;
                     }
                 }
+                if (!valid) continue;
+
+                int myCount = 0, oppCount = 0;
+                for (int[] c : corners) {
+                    PieceColorEnum cell = currentBoard.get(c[0], c[1]);
+                    if (cell == color) myCount++;
+                    else if (cell != null) oppCount++;
+                }
+
+                if (oppCount > 0) continue;
+
+                int weight = switch (myCount) {
+                    case 2 -> 20;
+                    case 1 -> 5;
+                    case 0 -> 1;
+                    default -> 0;
+                };
+
+                score[x][y] += weight;
             }
         }
-        return count;
     }
 
 }

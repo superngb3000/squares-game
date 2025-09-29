@@ -146,7 +146,7 @@ var handlers = {
             nextPlayerColor : gameSettings.nextMove
         };
         let move = await API.getNextMove(requestBody);
-        handlers.move(move.x, move.y);
+        setTimeout(() => { handlers.move(move.x, move.y) }, 1000);
     }
 }
 
