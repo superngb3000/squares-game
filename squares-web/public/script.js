@@ -146,7 +146,13 @@ var handlers = {
             nextPlayerColor : gameSettings.nextMove
         };
         let move = await API.getNextMove(requestBody);
-        setTimeout(() => { handlers.move(move.x, move.y) }, 1000);
+
+        let boardElem = document.getElementById("board");
+        boardElem.classList.add("static");
+        setTimeout(() => { 
+            handlers.move(move.x, move.y);
+            boardElem.classList.remove("static"); 
+        }, 500);
     }
 }
 
